@@ -1,0 +1,101 @@
+main_only: &main_only
+  filters:
+    branches:
+      only: main
+not_main: &not_main
+  filters:
+    branches:
+      ignore: main
+
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@3.1.5
+
+executors:
+  node:
+    docker:
+      - image: cimg/node:18.16.0
+  node-with-postgres:
+    docker:
+      - image: cimg/node:18.16.0
+      - image: cimg/postgres:12.7
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_nest_dashboard
+
+jobs:
+  build-and-test:
+    executor: node-with-postgres
+    steps:
+      - checkout
+      - run: yarn install --immutable
+      - run: yarn prisma:generate
+      - run: yarn prisma:generate:reporting
+      - run: yarn lint
+      - run: yarn build
+      - run: cp .env.example .env
+      - run:
+          name: Setup reporting DB
+          command: |
+            psql postgresql://postgres:postgres@localhost:5432/test_nest_dashboard --command="CREATE DATABASE test_nest_reporting WITH OWNER postgres;"
+      - run: yarn test --maxWorkers=2
+
+  build-image:
+    executor: node
+    steps:
+      - setup_remote_docker:
+          version: 20.10.18
+          docker_layer_caching: true
+      - checkout
+      - run: docker build -t nestdashboard:latest .
+      - run: mkdir -p workspace
+      - run: docker save -o ./workspace/nestdashboard.tar nestdashboard:latest
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - nestdashboard.tar
+
+  push-image:
+    executor: node
+    steps:
+      - run: mkdir -p workspace
+      - attach_workspace:
+          at: workspace
+      - setup_remote_docker:
+          version: 20.10.18
+      - run: docker load -i ./workspace/nestdashboard.tar
+      - run: docker tag nestdashboard:latest 375890309414.dkr.ecr.us-east-1.amazonaws.com/dev-mv-dashboard-mv-dashboard-ecr-node:latest
+      - aws-cli/setup
+      - run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REGISTRY
+      - run: docker tag nestdashboard:latest $ECR_REGISTRY/$ECR_REPO:latest
+      - run: docker tag nestdashboard:latest $ECR_REGISTRY/$ECR_REPO:$CIRCLE_SHA1
+      - run: docker push $ECR_REGISTRY/$ECR_REPO --all-tags
+      - run: aws ecs update-service --region us-east-1 --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment
+
+workflows:
+  pr-workflow:
+    jobs:
+      - build-and-test:
+          <<: *not_main
+
+  main-workflow:
+    jobs:
+      - build-image:
+          <<: *main_only
+      - push-image:
+          <<: *main_only
+          context: org-dashboard-api-dev
+          requires:
+            - build-image
+      - push-image:
+          <<: *main_only
+          context: org-dashboard-api-staging
+          requires:
+            - build-image
+      - push-image:
+          <<: *main_only
+          context: org-dashboard-api-prod
+          requires:
+            - build-image

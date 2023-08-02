@@ -1,0 +1,316 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Videos GET /api/v1/sites/:siteId/videos returns a list of video objects and a total count when at least one object exists 1`] = `
+[
+  {
+    "aspect_ratio": "16:9",
+    "created_at": "2023-06-16T19:22:32.063Z",
+    "description": "description",
+    "duration": 50,
+    "file": "file",
+    "height": 1080,
+    "id": "<video_id>",
+    "image": "image",
+    "keywords": "keywords",
+    "permalink": "permalink",
+    "site_id": "<site_id>",
+    "slug": "<video_slug>",
+    "status": "live",
+    "title": "title",
+    "up_next_order": "standard",
+    "updated_at": "2023-06-16T19:22:32.064Z",
+    "user_id": null,
+    "video_chapers": {
+      "chapters": [
+        {
+          "created_at": "2023-06-16T19:22:32.067Z",
+          "description": "description",
+          "id": "<chapter2_id>",
+          "time": 10,
+          "updated_at": "2023-06-16T19:22:32.068Z",
+          "video_id": "<video_id>",
+        },
+        {
+          "created_at": "2023-06-16T19:22:32.067Z",
+          "description": "description",
+          "id": "<chapter1_id>",
+          "time": 10,
+          "updated_at": "2023-06-16T19:22:32.068Z",
+          "video_id": "<video_id>",
+        },
+      ],
+    },
+    "video_number": null,
+    "vtt": {
+      "tracks": [
+        {
+          "created_at": "2023-06-16T19:22:32.065Z",
+          "default": false,
+          "filetype": "vtt",
+          "id": "<track2_id>",
+          "kind": "captions",
+          "label": null,
+          "slug": "<track2_slug>",
+          "srclang": "en",
+          "updated_at": "2023-06-16T19:22:32.066Z",
+          "video_id": "<video_id>",
+        },
+        {
+          "created_at": "2023-06-16T19:22:32.065Z",
+          "default": false,
+          "filetype": "vtt",
+          "id": "<track1_id>",
+          "kind": "captions",
+          "label": null,
+          "slug": "<track1_slug>",
+          "srclang": "en",
+          "updated_at": "2023-06-16T19:22:32.066Z",
+          "video_id": "<video_id>",
+        },
+      ],
+    },
+    "width": 1920,
+  },
+]
+`;
+
+exports[`Videos GET /api/v1/sites/:siteId/videos/:id matches the snapshot for a user with the ad_settings role 1`] = `200`;
+
+exports[`Videos GET /api/v1/sites/:siteId/videos/:id matches the snapshot for a user with the owner role 1`] = `200`;
+
+exports[`Videos GET /api/v1/sites/:siteId/videos/:id matches the snapshot for a user with the payment role 1`] = `200`;
+
+exports[`Videos GET /api/v1/sites/:siteId/videos/:id matches the snapshot for a user with the post_termination_new_owner role 1`] = `200`;
+
+exports[`Videos GET /api/v1/sites/:siteId/videos/:id matches the snapshot for a user with the reporting role 1`] = `200`;
+
+exports[`Videos GET /api/v1/sites/:siteId/videos/:id matches the snapshot for a user with the video role 1`] = `200`;
+
+exports[`Videos GET /api/v1/sites/:siteId/videos/:id returns a video object when it exists 1`] = `
+{
+  "video": {
+    "aspect_ratio": "16:9",
+    "created_at": 2020-01-01T00:00:00.000Z,
+    "description": "description",
+    "duration": 50,
+    "file": "file",
+    "has_unique_permalink": false,
+    "height": 1080,
+    "id": 100,
+    "image": "image",
+    "keywords": "keywords",
+    "meta": {
+      "mobile_popout_placement": "bottom_left",
+    },
+    "permalink": "permalink",
+    "site_id": 100,
+    "slug": 100,
+    "status": "live",
+    "streaming_profile": "video",
+    "title": "title",
+    "up_next_order": "standard",
+    "updated_at": 2020-01-01T00:00:00.000Z,
+    "user_id": null,
+    "video_chapters": [
+      {
+        "created_at": 2020-01-01T00:00:00.000Z,
+        "description": "description",
+        "id": 100,
+        "time": 10,
+        "updated_at": 2020-01-01T00:00:00.000Z,
+        "video_id": 100,
+      },
+      {
+        "created_at": 2020-01-01T00:00:00.000Z,
+        "description": "description",
+        "id": 100,
+        "time": 10,
+        "updated_at": 2020-01-01T00:00:00.000Z,
+        "video_id": 100,
+      },
+    ],
+    "video_headline": "video_headline",
+    "video_number": null,
+    "vtt": [
+      {
+        "created_at": 2020-01-01T00:00:00.000Z,
+        "default": false,
+        "filetype": "vtt",
+        "id": 100,
+        "kind": "captions",
+        "label": null,
+        "slug": 100,
+        "srclang": "en",
+        "updated_at": 2020-01-01T00:00:00.000Z,
+        "video_id": 100,
+      },
+      {
+        "created_at": 2020-01-01T00:00:00.000Z,
+        "default": false,
+        "filetype": "vtt",
+        "id": 100,
+        "kind": "captions",
+        "label": null,
+        "slug": 100,
+        "srclang": "en",
+        "updated_at": 2020-01-01T00:00:00.000Z,
+        "video_id": 100,
+      },
+    ],
+    "width": 1920,
+  },
+}
+`;
+
+exports[`Videos PATCH /api/v1/sites/:siteId/videos/:slug/reprocess matches the snapshot for a user with the ad_settings role 1`] = `401`;
+
+exports[`Videos PATCH /api/v1/sites/:siteId/videos/:slug/reprocess matches the snapshot for a user with the owner role 1`] = `401`;
+
+exports[`Videos PATCH /api/v1/sites/:siteId/videos/:slug/reprocess matches the snapshot for a user with the payment role 1`] = `401`;
+
+exports[`Videos PATCH /api/v1/sites/:siteId/videos/:slug/reprocess matches the snapshot for a user with the post_termination_new_owner role 1`] = `401`;
+
+exports[`Videos PATCH /api/v1/sites/:siteId/videos/:slug/reprocess matches the snapshot for a user with the reporting role 1`] = `401`;
+
+exports[`Videos PATCH /api/v1/sites/:siteId/videos/:slug/reprocess matches the snapshot for a user with the video role 1`] = `401`;
+
+exports[`Videos PATCH /api/v1/sites/:siteId/videos/:slug/reprocess responds with a video object 1`] = `
+{
+  "video": {
+    "aspect_ratio": "16:9",
+    "created_at": 2020-01-01T00:00:00.000Z,
+    "description": "description",
+    "duration": 50,
+    "file": "file",
+    "has_unique_permalink": false,
+    "height": 1080,
+    "id": 100,
+    "image": "image",
+    "keywords": "keywords",
+    "meta": {
+      "mobile_popout_placement": "bottom_left",
+    },
+    "permalink": "permalink",
+    "site_id": 100,
+    "slug": "hetppjceg7guktdccohm",
+    "status": "processing",
+    "streaming_profile": "video",
+    "title": "title",
+    "up_next_order": "standard",
+    "updated_at": 2020-01-01T00:00:00.000Z,
+    "user_id": null,
+    "video_chapters": [],
+    "video_headline": "video_headline",
+    "video_number": null,
+    "vtt": [],
+    "width": 1920,
+  },
+}
+`;
+
+exports[`Videos POST /api/v1/sites/:siteId/videos matches the snapshot for a user with the ad_settings role 1`] = `401`;
+
+exports[`Videos POST /api/v1/sites/:siteId/videos matches the snapshot for a user with the owner role 1`] = `201`;
+
+exports[`Videos POST /api/v1/sites/:siteId/videos matches the snapshot for a user with the payment role 1`] = `401`;
+
+exports[`Videos POST /api/v1/sites/:siteId/videos matches the snapshot for a user with the post_termination_new_owner role 1`] = `401`;
+
+exports[`Videos POST /api/v1/sites/:siteId/videos matches the snapshot for a user with the reporting role 1`] = `401`;
+
+exports[`Videos POST /api/v1/sites/:siteId/videos matches the snapshot for a user with the video role 1`] = `201`;
+
+exports[`Videos POST /api/v1/sites/:siteId/videos returns the expected object 1`] = `
+{
+  "video": {
+    "aspect_ratio": "16:9",
+    "created_at": 2020-01-01T00:00:00.000Z,
+    "description": "description",
+    "duration": 30,
+    "file": "vversion/<randomId>",
+    "has_unique_permalink": true,
+    "height": 1080,
+    "id": 100,
+    "image": "image",
+    "keywords": "keywords",
+    "meta": {
+      "auto_insert_offset": "10",
+      "auto_insert_sticky_video": "true",
+      "custom_hoist_position": "bottom_right",
+      "custom_hoist_selector": "body",
+      "default_video_headline": "headline",
+      "default_video_headline_el": "h1",
+      "default_vtt": "30",
+      "disable_overlay": "true",
+      "featured_video_allow_selector": "body",
+      "featured_video_id": "1",
+      "featured_video_type": "video",
+      "hoist_first_video": "true",
+      "hoist_first_video_desktop": "true",
+      "hoist_first_video_mobile": "true",
+      "midroll_enabled": "true",
+      "mobile_popout_placement": "bottom_right",
+      "mobile_popout_top_margin": "10",
+      "player_aspect_ratio": "16:9",
+      "player_background": "transparent",
+      "sticky_content_side": "true",
+    },
+    "permalink": "http://<randomId>.com",
+    "site_id": 100,
+    "slug": "<randomId>",
+    "status": "processing",
+    "streaming_profile": "video",
+    "title": "title",
+    "up_next_order": "boosted",
+    "updated_at": 2020-01-01T00:00:00.000Z,
+    "user_id": 100,
+    "video_chapters": [
+      {
+        "created_at": 2020-01-01T00:00:00.000Z,
+        "description": "description",
+        "id": 100,
+        "time": 30,
+        "updated_at": 2020-01-01T00:00:00.000Z,
+        "video_id": 100,
+      },
+      {
+        "created_at": 2020-01-01T00:00:00.000Z,
+        "description": "description",
+        "id": 100,
+        "time": 45,
+        "updated_at": 2020-01-01T00:00:00.000Z,
+        "video_id": 100,
+      },
+    ],
+    "video_headline": "video_headline",
+    "video_number": 1,
+    "vtt": [
+      {
+        "created_at": 2020-01-01T00:00:00.000Z,
+        "default": false,
+        "filetype": "filetype",
+        "id": 100,
+        "kind": "kind",
+        "label": "label",
+        "slug": "slug",
+        "srclang": "srclang",
+        "updated_at": 2020-01-01T00:00:00.000Z,
+        "video_id": 100,
+      },
+      {
+        "created_at": 2020-01-01T00:00:00.000Z,
+        "default": false,
+        "filetype": "filetype",
+        "id": 100,
+        "kind": "kind",
+        "label": "label",
+        "slug": "slug",
+        "srclang": "srclang",
+        "updated_at": 2020-01-01T00:00:00.000Z,
+        "video_id": 100,
+      },
+    ],
+    "width": 1920,
+  },
+}
+`;

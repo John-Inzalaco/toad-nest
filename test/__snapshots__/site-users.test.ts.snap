@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`site_users routes GET /api/v1/sites/:site_id/site_users returns all site_users for a site owner 1`] = `
+{
+  "site_users": [
+    {
+      "email": "<randomId>-1@example.com",
+      "roles": [
+        "owner",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-2@example.com",
+      "roles": [
+        "ad_settings",
+        "reporting",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-3@example.com",
+      "roles": [
+        "video",
+        "payment",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-4@example.com",
+      "roles": [
+        "post_termination_new_owner",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-6@example.com",
+      "roles": [],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+  ],
+}
+`;
+
+exports[`site_users routes GET /api/v1/sites/:site_id/site_users returns all site_users for an admin 1`] = `
+{
+  "site_users": [
+    {
+      "email": "<randomId>-1@example.com",
+      "roles": [
+        "owner",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-2@example.com",
+      "roles": [
+        "ad_settings",
+        "reporting",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-3@example.com",
+      "roles": [
+        "video",
+        "payment",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-4@example.com",
+      "roles": [
+        "post_termination_new_owner",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-6@example.com",
+      "roles": [],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+  ],
+}
+`;
+
+exports[`site_users routes GET /api/v1/sites/:site_id/site_users returns all site_users with a pds token 1`] = `
+{
+  "site_users": [
+    {
+      "email": "<randomId>-1@example.com",
+      "roles": [
+        "owner",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-2@example.com",
+      "roles": [
+        "ad_settings",
+        "reporting",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-3@example.com",
+      "roles": [
+        "video",
+        "payment",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-4@example.com",
+      "roles": [
+        "post_termination_new_owner",
+      ],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+    {
+      "email": "<randomId>-6@example.com",
+      "roles": [],
+      "site_id": "<site_id>",
+      "site_user_id": Any<Number>,
+      "user_id": Any<Number>,
+    },
+  ],
+}
+`;

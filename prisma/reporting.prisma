@@ -1,0 +1,346 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/generated/reportingClient"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("REPORTING_DATABASE_URL")
+}
+
+model adunit_reports {
+  id                   Int       @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  adunit               String?   @db.VarChar
+  impressions          Int?
+  revenue              Int?
+  unfilled_impressions Int       @default(0)
+  viewable_impressions Int       @default(0)
+  viewed_impressions   Int       @default(0)
+  net_revenue          Int       @default(0)
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @db.Timestamp(6)
+
+  @@index([date, adunit], map: "index_adunit_reports_on_date_and_adunit")
+  @@index([site_id, date, adunit], map: "index_adunit_reports_on_site_id_and_date_and_adunit")
+  @@index([updated_at], map: "index_adunit_reports_on_updated_at")
+}
+
+model advertiser_groups {
+  id               BigInt   @id @default(autoincrement())
+  advertiser       String   @unique(map: "idx_advertiser_group_uni_adv") @db.VarChar
+  advertiser_group String   @db.VarChar
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @db.Timestamp(6)
+
+  @@index([updated_at], map: "index_advertiser_groups_on_updated_at")
+}
+
+model advertiser_reports {
+  id          Int       @id @default(autoincrement())
+  site_id     Int?
+  date        DateTime? @db.Date
+  advertiser  String?   @db.VarChar(16)
+  impressions Int?
+  revenue     Int?
+  net_revenue Int       @default(0)
+  created_at  DateTime? @db.Timestamp(6)
+  updated_at  DateTime? @db.Timestamp(6)
+
+  @@index([date], map: "index_advertiser_reports_on_date")
+  @@index([site_id, date, advertiser], map: "index_advertiser_reports_on_site_id_and_date_and_advertiser")
+  @@index([updated_at], map: "index_advertiser_reports_on_updated_at")
+}
+
+model ar_internal_metadata {
+  key        String   @id @db.VarChar
+  value      String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @db.Timestamp(6)
+}
+
+model awsdms_ddl_audit {
+  c_key    BigInt    @id @default(autoincrement())
+  c_time   DateTime? @db.Timestamp(6)
+  c_user   String?   @db.VarChar(64)
+  c_txn    String?   @db.VarChar(16)
+  c_tag    String?   @db.VarChar(24)
+  c_oid    Int?
+  c_name   String?   @db.VarChar(64)
+  c_schema String?   @db.VarChar(64)
+  c_ddlqry String?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bjf_temp_health_checks_backup {
+  id                  BigInt?
+  site_id             BigInt?
+  date                DateTime? @db.Date
+  ads_txt             String?   @db.VarChar
+  privacy_policy      String?   @db.VarChar
+  desktop_ads         Float?
+  mobile_ads          Float?
+  sticky_sidebar_ads  Float?
+  created_at          DateTime? @db.Timestamp(6)
+  updated_at          DateTime? @db.Timestamp(6)
+  revenue_share       Int?
+  desktop_viewability Float?
+  mobile_viewability  Float?
+
+  @@ignore
+}
+
+model child_adunit_reports {
+  id                   BigInt    @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  child_adunit         String?   @db.VarChar
+  device_type          String?   @db.VarChar
+  impressions          Int       @default(0)
+  revenue              Int       @default(0)
+  unfilled_impressions Int       @default(0)
+  viewable_impressions Int       @default(0)
+  viewed_impressions   Int       @default(0)
+  net_revenue          Int       @default(0)
+  unpaid_impressions   Int       @default(0)
+  paid_impressions     Int       @default(0)
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @db.Timestamp(6)
+
+  @@index([date, child_adunit], map: "index_child_adunit_reports_on_date_and_child_adunit")
+  @@index([site_id, date, child_adunit], map: "index_child_adunit_reports_on_site_id_and_date_and_child_adunit")
+  @@index([updated_at], map: "index_child_adunit_reports_on_updated_at")
+}
+
+model country_reports {
+  id                   Int       @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  country              String?   @db.VarChar(24)
+  pageviews            Int?
+  sessions             Int?
+  users                Int?
+  revenue              Int?
+  net_revenue          Int?
+  impressions          Int?
+  unfilled_impressions Int?
+  viewable_impressions Int?
+  viewed_impressions   Int?
+  unpaid_impressions   Int?
+  paid_impressions     Int?
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @db.Timestamp(6)
+
+  @@index([date], map: "index_country_reports_on_date")
+  @@index([site_id], map: "index_country_reports_on_site_id")
+  @@index([site_id, date, country], map: "index_country_reports_on_site_id_and_date_and_country")
+  @@index([updated_at], map: "index_country_reports_on_updated_at")
+}
+
+model health_checks {
+  id                  BigInt    @id @default(autoincrement())
+  site_id             BigInt?
+  date                DateTime? @db.Date
+  ads_txt             String?   @db.VarChar
+  privacy_policy      String?   @db.VarChar
+  desktop_ads         Float?
+  mobile_ads          Float?
+  sticky_sidebar_ads  Float?
+  created_at          DateTime  @db.Timestamp(6)
+  updated_at          DateTime  @db.Timestamp(6)
+  revenue_share       Int?
+  desktop_viewability Float?
+  mobile_viewability  Float?
+
+  @@index([date], map: "index_health_checks_on_date")
+  @@index([site_id], map: "index_health_checks_on_site_id")
+  @@index([updated_at], map: "index_health_checks_on_updated_at")
+}
+
+model page_reports {
+  id                   Int       @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  path                 String?   @db.VarChar
+  pageviews            Int?      @default(0)
+  amp_pageviews        Int?      @default(0)
+  revenue              Int?
+  net_revenue          Int?
+  impressions          Int?
+  unfilled_impressions Int?
+  viewable_impressions Int?
+  viewed_impressions   Int?
+  unpaid_impressions   Int?
+  paid_impressions     Int?
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @db.Timestamp(6)
+
+  @@index([date], map: "index_page_reports_on_date")
+  @@index([date, pageviews], map: "index_page_reports_on_date_and_pageviews")
+  @@index([site_id, date], map: "index_page_reports_on_site_id_and_date")
+  @@index([updated_at], map: "index_page_reports_on_updated_at")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model page_reports_load {
+  site_id              BigInt?
+  date                 DateTime? @db.Date
+  path                 String?
+  pageviews            Int?
+  amp_pageviews        BigInt?
+  revenue              Int?
+  net_revenue          Int?
+  impresssions         Int?
+  unfilled_impressions Int?
+  viewable_impressions Int?
+  viewed_impressions   Int?
+  unpaid_impressions   Int?
+  paid_impressions     Int?
+
+  @@ignore
+}
+
+model pageview_reports {
+  id                     Int       @id @default(autoincrement())
+  site_id                Int?
+  date                   DateTime? @db.Date
+  desktop_pageviews      Int       @default(0)
+  mobile_pageviews       Int       @default(0)
+  tablet_pageviews       Int       @default(0)
+  users                  Int?
+  amp_pageviews          Int?      @default(0)
+  amp_users              Int?      @default(0)
+  mobile_sessions        Int       @default(0)
+  tablet_sessions        Int       @default(0)
+  desktop_sessions       Int       @default(0)
+  amp_sessions           Int       @default(0)
+  amp_net_revenue        Int       @default(0)
+  mobile_net_revenue     Int       @default(0)
+  tablet_net_revenue     Int       @default(0)
+  desktop_net_revenue    Int       @default(0)
+  created_at             DateTime? @db.Timestamp(6)
+  updated_at             DateTime? @db.Timestamp(6)
+  bounces                Int?      @default(0)
+  total_session_duration Decimal?  @default(0) @db.Decimal(18, 1)
+
+  @@index([date], map: "index_pageview_reports_on_date")
+  @@index([site_id, date], map: "index_pageview_reports_on_site_id_and_date")
+  @@index([updated_at], map: "index_pageview_reports_on_updated_at")
+}
+
+model partner_reports {
+  id          Int       @id @default(autoincrement())
+  site_id     Int?
+  partner_id  Int?
+  date        DateTime? @db.Date
+  revenue     Int?
+  net_revenue Int       @default(0)
+  created_at  DateTime? @db.Timestamp(6)
+  updated_at  DateTime? @db.Timestamp(6)
+
+  @@index([date], map: "index_partner_reports_on_date")
+  @@index([partner_id, date], map: "index_partner_reports_on_partner_id_and_date")
+  @@index([partner_id, site_id, date], map: "index_partner_reports_on_partner_id_and_site_id_and_date")
+  @@index([site_id, date], map: "index_partner_reports_on_site_id_and_date")
+  @@index([site_id, partner_id, date], map: "index_partner_reports_on_site_id_and_partner_id_and_date")
+  @@index([updated_at], map: "index_partner_reports_on_updated_at")
+}
+
+model revenue_reports {
+  id                   BigInt    @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  revenue              BigInt?
+  net_revenue          BigInt?
+  impressions          Int?
+  unfilled_impressions Int?
+  viewable_impressions Int?
+  viewed_impressions   Int?
+  unpaid_impressions   Int       @default(0)
+  paid_impressions     Int       @default(0)
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @db.Timestamp(6)
+
+  @@unique([site_id, date], map: "index_revenue_reports_on_site_id_and_date")
+  @@index([date], map: "index_revenue_reports_on_date")
+  @@index([updated_at], map: "index_revenue_reports_on_updated_at")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model revenue_share_manual_override {
+  id            Int       @default(autoincrement())
+  date          DateTime  @db.Date
+  site_id       Int
+  revenue_share Int?
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  updated_at    DateTime? @default(now()) @db.Timestamp(6)
+
+  @@ignore
+}
+
+model sample_sites {
+  site_id    Int      @id
+  site_title String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model schema_migrations {
+  version String @unique(map: "unique_schema_migrations") @db.VarChar
+}
+
+model source_reports {
+  id                   BigInt    @id @default(autoincrement())
+  site_id              BigInt?
+  date                 DateTime? @db.Date
+  source               String?   @db.VarChar
+  sessions             Int?
+  pageviews            Int?
+  avg_session_duration Int?
+  impressions          Int?
+  revenue              Int?
+  net_revenue          Int?
+  created_at           DateTime  @db.Timestamp(6)
+  updated_at           DateTime  @db.Timestamp(6)
+  account_type         String?   @db.VarChar(255)
+
+  @@index([date], map: "index_source_reports_on_date")
+  @@index([site_id], map: "index_source_reports_on_site_id")
+  @@index([site_id, date], map: "index_source_reports_on_site_id_and_date")
+  @@index([updated_at], map: "index_source_reports_on_updated_at")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model temp_bjf_page_reports {
+  id            Int?
+  site_id       Int?
+  date          DateTime? @db.Date
+  path          String?   @db.VarChar
+  pageviews     Int?      @default(0)
+  amp_pageviews Int?      @default(0)
+  created_at    DateTime? @db.Timestamp(6)
+  updated_at    DateTime? @db.Timestamp(6)
+
+  @@ignore
+}
+
+model video_reports {
+  id                   Int       @id @default(autoincrement())
+  video_id             Int?
+  date                 DateTime? @db.Date
+  impressions          Int       @default(0)
+  revenue              Int       @default(0)
+  unfilled_impressions Int       @default(0)
+  viewable_impressions Int       @default(0)
+  viewed_impressions   Int       @default(0)
+  net_revenue          Int       @default(0)
+  site_id              Int?
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @db.Timestamp(6)
+
+  @@index([date], map: "index_video_reports_on_date")
+  @@index([updated_at], map: "index_video_reports_on_updated_at")
+  @@index([video_id, date], map: "index_video_reports_on_video_id_and_date")
+  @@index([site_id, date], map: "site_id_on_date")
+}

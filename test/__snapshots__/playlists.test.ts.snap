@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Playlists Index returns all playlists 1`] = `
+{
+  "playlists": [
+    {
+      "created_at": "<created_at>",
+      "description": "<description>",
+      "headline": "headline",
+      "id": "<id>",
+      "image": "image",
+      "site_id": "<site_id>",
+      "title": "<title>",
+      "updated_at": "<updated_at>",
+      "user_id": "<user_id>",
+      "videos": [
+        {
+          "image": "https://mediavine-res.cloudinary.com/image/upload/s--v6aTJEiM--/c_limit,f_auto,fl_lossy,h_1080,q_auto,w_1920/image.jpg",
+          "slug": "<slug>",
+          "title": "<title>",
+        },
+        {
+          "image": "https://mediavine-res.cloudinary.com/image/upload/s--v6aTJEiM--/c_limit,f_auto,fl_lossy,h_1080,q_auto,w_1920/image.jpg",
+          "slug": "<slug>",
+          "title": "<title>",
+        },
+      ],
+    },
+    {
+      "created_at": "<created_at>",
+      "description": "<description>",
+      "headline": "headline",
+      "id": "<id>",
+      "image": "image",
+      "site_id": "<site_id>",
+      "title": "<title>",
+      "updated_at": "<updated_at>",
+      "user_id": "<user_id>",
+      "videos": [
+        {
+          "image": "https://mediavine-res.cloudinary.com/image/upload/s--v6aTJEiM--/c_limit,f_auto,fl_lossy,h_1080,q_auto,w_1920/image.jpg",
+          "slug": "<slug>",
+          "title": "<title>",
+        },
+        {
+          "image": "https://mediavine-res.cloudinary.com/image/upload/s--v6aTJEiM--/c_limit,f_auto,fl_lossy,h_1080,q_auto,w_1920/image.jpg",
+          "slug": "<slug>",
+          "title": "<title>",
+        },
+      ],
+    },
+  ],
+  "total_count": 2,
+}
+`;

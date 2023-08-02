@@ -1,0 +1,1189 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../node_modules/.prisma/generated/dashboardClient"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model adunit_reports {
+  id                   Int       @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  adunit               String?   @db.VarChar
+  impressions          Int?
+  revenue              Int?
+  unfilled_impressions Int       @default(0)
+  viewable_impressions Int       @default(0)
+  viewed_impressions   Int       @default(0)
+  net_revenue          Int       @default(0)
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([date, adunit], map: "index_adunit_reports_on_date_and_adunit")
+  @@index([site_id, date, adunit], map: "index_adunit_reports_on_site_id_and_date_and_adunit")
+  @@index([updated_at], map: "index_adunit_reports_on_updated_at")
+}
+
+model advertiser_groups {
+  id               BigInt   @id @default(autoincrement())
+  advertiser       String   @unique(map: "idx_advertiser_group_uni_adv") @db.VarChar
+  advertiser_group String   @db.VarChar
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @updatedAt @db.Timestamp(6)
+
+  @@index([updated_at], map: "index_advertiser_groups_on_updated_at")
+}
+
+model advertiser_reports {
+  id          Int       @id @default(autoincrement())
+  site_id     Int?
+  date        DateTime? @db.Date
+  advertiser  String?   @db.VarChar(16)
+  impressions Int?
+  revenue     Int?
+  net_revenue Int       @default(0)
+  created_at  DateTime? @db.Timestamp(6)
+  updated_at  DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([date], map: "index_advertiser_reports_on_date")
+  @@index([site_id, date, advertiser], map: "index_advertiser_reports_on_site_id_and_date_and_advertiser")
+  @@index([updated_at], map: "index_advertiser_reports_on_updated_at")
+}
+
+model analytics_connections {
+  id                        BigInt   @id @default(autoincrement())
+  property                  String?  @db.VarChar
+  site_id                   BigInt?
+  onboarding_application_id BigInt?
+  status                    String?  @db.VarChar
+  created_at                DateTime @db.Timestamp(6)
+  updated_at                DateTime @updatedAt @db.Timestamp(6)
+  account_type              String   @db.VarChar
+  issuer                    String?  @db.VarChar
+  refresh_token             String?  @db.VarChar
+  google_access_token_id    BigInt?
+  scope                     String?
+  user_id                   BigInt?
+
+  @@index([onboarding_application_id], map: "index_analytics_connection_on_onboarding_application")
+  @@index([site_id], map: "index_analytics_connection_on_site")
+  @@index([status], map: "index_analytics_connection_on_status")
+  @@index([account_type], map: "index_analytics_connections_on_account_type")
+  @@index([google_access_token_id], map: "index_analytics_connections_on_google_access_token_id")
+}
+
+model analytics_tokens {
+  id                     BigInt   @id @default(autoincrement())
+  refresh_token          String?  @db.VarChar
+  scope                  String?  @db.VarChar
+  user_id                Int
+  created_at             DateTime @db.Timestamp(6)
+  updated_at             DateTime @updatedAt @db.Timestamp(6)
+  google_access_token_id BigInt?
+  users                  users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_623e3db717")
+
+  @@index([google_access_token_id], map: "index_analytics_tokens_on_google_access_token_id")
+  @@index([user_id], map: "index_analytics_tokens_on_user_id")
+}
+
+model ar_internal_metadata {
+  key        String   @id @db.VarChar
+  value      String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+}
+
+model beta_center_settings {
+  id            BigInt   @id @default(autoincrement())
+  site_id       BigInt?
+  opt_in_option String   @db.VarChar
+  opt_in_value  Boolean? @default(false)
+  created_at    DateTime @db.Timestamp(6)
+  updated_at    DateTime @updatedAt @db.Timestamp(6)
+
+  @@index([site_id], map: "index_beta_center_settings_on_site_id")
+}
+
+model campaign_creative_reports {
+  id                   BigInt    @id @default(autoincrement())
+  site_id              BigInt?
+  campaign_creative_id BigInt?
+  date                 DateTime? @db.Date
+  impressions          Int?      @default(0)
+  clicks               Int?      @default(0)
+
+  @@index([campaign_creative_id], map: "index_campaign_creative_reports_on_campaign_creative_id")
+  @@index([site_id], map: "index_campaign_creative_reports_on_site_id")
+  @@index([site_id, date], map: "index_campaign_creative_reports_on_site_id_and_date")
+}
+
+model campaign_creatives {
+  id                      BigInt   @id @default(autoincrement())
+  campaign_id             BigInt?
+  image_url               String?  @db.VarChar
+  target_ad_unit_size     String?  @db.VarChar
+  gam_creative_id         String?  @db.VarChar
+  created_at              DateTime @db.Timestamp(6)
+  updated_at              DateTime @updatedAt @db.Timestamp(6)
+  remove_from_campaign_id Int?
+  name                    String?  @db.VarChar
+
+  @@index([campaign_id], map: "index_campaign_creatives_on_campaign_id")
+}
+
+model campaigns {
+  id                BigInt   @id @default(autoincrement())
+  site_id           BigInt?
+  user_id           BigInt?
+  title             String?  @db.VarChar
+  click_through_url String?  @db.VarChar
+  aasm_state        String?  @db.VarChar
+  gam_line_item_id  String?  @db.VarChar
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @updatedAt @db.Timestamp(6)
+  gam_sync_state    String?  @db.VarChar
+
+  @@index([site_id], map: "index_campaigns_on_site_id")
+  @@index([user_id], map: "index_campaigns_on_user_id")
+}
+
+model categories {
+  id         Int      @id @default(autoincrement())
+  title      String?  @db.VarChar
+  slug       String?  @db.VarChar
+  parent_id  Int?
+  iab_code   String?  @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+  sites      sites[]
+
+  @@index([parent_id, title], map: "index_categories_on_parent_id_and_title")
+  @@index([title], map: "index_categories_on_title")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model categories_sites {
+  category_id Int
+  site_id     Int
+  created_at  DateTime? @db.Timestamp(6)
+  updated_at  DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([category_id], map: "index_categories_sites_on_category_id")
+  @@index([site_id], map: "index_categories_sites_on_site_id")
+  @@ignore
+}
+
+model child_adunit_reports {
+  id                   BigInt    @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  child_adunit         String?   @db.VarChar
+  device_type          String?   @db.VarChar
+  impressions          Int       @default(0)
+  revenue              Int       @default(0)
+  unfilled_impressions Int       @default(0)
+  viewable_impressions Int       @default(0)
+  viewed_impressions   Int       @default(0)
+  net_revenue          Int       @default(0)
+  unpaid_impressions   Int       @default(0)
+  paid_impressions     Int       @default(0)
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([date, child_adunit], map: "index_child_adunit_reports_on_date_and_child_adunit")
+  @@index([site_id, date, child_adunit], map: "index_child_adunit_reports_on_site_id_and_date_and_child_adunit")
+  @@index([updated_at], map: "index_child_adunit_reports_on_updated_at")
+}
+
+model countries {
+  id   Int     @id @default(autoincrement())
+  name String? @unique(map: "index_countries_on_name") @db.VarChar
+  code String? @unique(map: "index_countries_on_code") @db.VarChar
+}
+
+model country_reports {
+  id                   Int       @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  country              String?   @db.VarChar(24)
+  pageviews            Int?
+  sessions             Int?
+  users                Int?
+  revenue              Int?
+  net_revenue          Int?
+  impressions          Int?
+  unfilled_impressions Int?
+  viewable_impressions Int?
+  viewed_impressions   Int?
+  unpaid_impressions   Int?
+  paid_impressions     Int?
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([date], map: "index_country_reports_on_date")
+  @@index([site_id], map: "index_country_reports_on_site_id")
+  @@index([site_id, date, country], map: "index_country_reports_on_site_id_and_date_and_country")
+  @@index([updated_at], map: "index_country_reports_on_updated_at")
+}
+
+model credits {
+  id          Int       @id @default(autoincrement())
+  site_id     Int?
+  description String?   @db.VarChar
+  amount      Decimal?  @db.Decimal(8, 2)
+  date        DateTime? @db.Date
+  created_at  DateTime  @db.Timestamp(6)
+  updated_at  DateTime  @updatedAt @db.Timestamp(6)
+  sites       sites?    @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_ca858c5018")
+
+  @@index([date], map: "index_credits_on_date")
+  @@index([site_id, date], map: "index_credits_on_site_id_and_date")
+}
+
+model custom_purposes {
+  id          Int      @id @default(autoincrement())
+  site_id     Int?
+  name        String?  @db.VarChar
+  purpose_id  Int?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+  description String?
+  sites       sites?   @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_8f49af3dbc")
+
+  @@index([site_id, purpose_id], map: "index_custom_purposes_on_site_id_and_purpose_id")
+}
+
+model custom_views {
+  id               BigInt   @id @default(autoincrement())
+  title            String?  @db.VarChar
+  content          String?
+  user_id          BigInt?
+  shared_with_team Boolean?
+  created_at       DateTime @db.Timestamp(6)
+  updated_at       DateTime @updatedAt @db.Timestamp(6)
+
+  @@index([user_id], map: "index_custom_views_on_user_id")
+}
+
+model flipper_features {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique(map: "index_flipper_features_on_key") @db.VarChar
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+}
+
+model flipper_gates {
+  id          Int      @id @default(autoincrement())
+  feature_key String   @db.VarChar
+  key         String   @db.VarChar
+  value       String?  @db.VarChar
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+
+  @@unique([feature_key, key, value], map: "index_flipper_gates_on_feature_key_and_key_and_value")
+}
+
+model google_access_tokens {
+  id            BigInt   @id @default(autoincrement())
+  access_token  String?  @db.VarChar
+  refresh_token String?  @db.VarChar
+  id_token      String?  @unique(map: "index_google_access_tokens_on_id_token") @db.VarChar
+  created_at    DateTime @db.Timestamp(6)
+  updated_at    DateTime @updatedAt @db.Timestamp(6)
+  user_id       Int?
+  scope         String?  @db.VarChar
+}
+
+model health_checks {
+  id                  BigInt    @id @default(autoincrement())
+  site_id             BigInt?
+  date                DateTime? @db.Date
+  ads_txt             String?   @db.VarChar
+  privacy_policy      String?   @db.VarChar
+  desktop_ads         Float?
+  mobile_ads          Float?
+  sticky_sidebar_ads  Float?
+  created_at          DateTime  @db.Timestamp(6)
+  updated_at          DateTime  @updatedAt @db.Timestamp(6)
+  revenue_share       Int?
+  desktop_viewability Float?
+  mobile_viewability  Float?
+
+  @@index([date], map: "index_health_checks_on_date")
+  @@index([site_id], map: "index_health_checks_on_site_id")
+  @@index([updated_at], map: "index_health_checks_on_updated_at")
+}
+
+model mcm_child_publishers {
+  id              Int             @id @default(autoincrement())
+  company_id      BigInt?
+  email           String?         @db.VarChar
+  name            String?         @db.VarChar
+  network_code    String?         @db.VarChar
+  status          String?         @db.VarChar
+  created_at      DateTime        @db.Timestamp(6)
+  updated_at      DateTime        @updatedAt @db.Timestamp(6)
+  google_appealed Boolean?        @default(false)
+  google_submit   Boolean?        @default(false)
+  approved_at     DateTime?       @db.Timestamp(6)
+  seller_id       String?         @db.VarChar
+  declined_at     DateTime?       @db.Timestamp(6)
+  disapproved_at  DateTime?       @db.Timestamp(6)
+  pending_at      DateTime?       @db.Timestamp(6)
+  inactive_at     DateTime?       @db.Timestamp(6)
+  invited_at      DateTime?       @db.Timestamp(6)
+  offering_id     BigInt?         @default(1)
+  business_name   String?         @db.VarChar
+  business_domain String?         @db.VarChar
+  expired_at      DateTime?       @db.Timestamp(6)
+  mcm_gam_sites   mcm_gam_sites[]
+
+  @@index([email, offering_id], map: "index_mcm_child_publishers_on_email_and_offering_id")
+  @@index([name, offering_id], map: "index_mcm_child_publishers_on_name_and_offering_id")
+  @@index([offering_id], map: "index_mcm_child_publishers_on_offering_id")
+}
+
+model mcm_gam_sites {
+  id                        Int                   @id @default(autoincrement())
+  mcm_child_publisher_id    Int?
+  gam_site_id               BigInt?
+  status                    String?               @db.VarChar
+  domain                    String?               @unique(map: "index_mcm_gam_sites_on_domain") @db.VarChar
+  created_at                DateTime              @db.Timestamp(6)
+  updated_at                DateTime              @updatedAt @db.Timestamp(6)
+  site_id                   Int?
+  onboarding_application_id BigInt?
+  google_submit             Boolean?              @default(false)
+  seen                      Boolean?              @default(false)
+  active_at                 DateTime?             @db.Timestamp(6)
+  tagging_enabled_at        DateTime?             @db.Timestamp(6)
+  disapproved_at            DateTime?             @db.Timestamp(6)
+  duplicate_at              DateTime?             @db.Timestamp(6)
+  invited_at                DateTime?             @db.Timestamp(6)
+  sites                     sites[]
+  mcm_child_publishers      mcm_child_publishers? @relation(fields: [mcm_child_publisher_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([mcm_child_publisher_id], map: "index_mcm_gam_sites_on_mcm_child_publisher_id")
+  @@index([onboarding_application_id], map: "index_mcm_gam_sites_on_onboarding_application_id")
+  @@index([site_id], map: "index_mcm_gam_sites_on_site_id")
+}
+
+model oauth_access_grants {
+  id                 BigInt             @id @default(autoincrement())
+  resource_owner_id  Int
+  application_id     BigInt
+  token              String             @unique(map: "index_oauth_access_grants_on_token") @db.VarChar
+  expires_in         Int
+  redirect_uri       String
+  created_at         DateTime           @db.Timestamp(6)
+  revoked_at         DateTime?          @db.Timestamp(6)
+  scopes             String             @default("") @db.VarChar
+  users              users              @relation(fields: [resource_owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_330c32d8d9")
+  oauth_applications oauth_applications @relation(fields: [application_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_b4b53e07b8")
+
+  @@index([application_id], map: "index_oauth_access_grants_on_application_id")
+  @@index([resource_owner_id], map: "index_oauth_access_grants_on_resource_owner_id")
+}
+
+model oauth_access_tokens {
+  id                     BigInt             @id @default(autoincrement())
+  resource_owner_id      Int?
+  application_id         BigInt
+  token                  String             @unique(map: "index_oauth_access_tokens_on_token") @db.VarChar
+  refresh_token          String?            @unique(map: "index_oauth_access_tokens_on_refresh_token") @db.VarChar
+  expires_in             Int?
+  revoked_at             DateTime?          @db.Timestamp(6)
+  created_at             DateTime           @db.Timestamp(6)
+  scopes                 String?            @db.VarChar
+  previous_refresh_token String             @default("") @db.VarChar
+  oauth_applications     oauth_applications @relation(fields: [application_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_732cb83ab7")
+  users                  users?             @relation(fields: [resource_owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_ee63f25419")
+
+  @@index([application_id], map: "index_oauth_access_tokens_on_application_id")
+  @@index([resource_owner_id], map: "index_oauth_access_tokens_on_resource_owner_id")
+}
+
+model oauth_applications {
+  id                  BigInt                @id @default(autoincrement())
+  name                String                @db.VarChar
+  uid                 String                @unique(map: "index_oauth_applications_on_uid") @db.VarChar
+  secret              String                @db.VarChar
+  redirect_uri        String
+  scopes              String                @default("") @db.VarChar
+  confidential        Boolean               @default(true)
+  created_at          DateTime              @db.Timestamp(6)
+  updated_at          DateTime              @updatedAt @db.Timestamp(6)
+  oauth_access_grants oauth_access_grants[]
+  oauth_access_tokens oauth_access_tokens[]
+}
+
+model offerings {
+  id                        Int                         @id @default(autoincrement())
+  name                      String?                     @db.VarChar(128)
+  gam_network_code          String?                     @db.VarChar(128)
+  created_at                DateTime                    @db.Timestamp(6)
+  updated_at                DateTime                    @updatedAt @db.Timestamp(6)
+  offering_code             String                      @unique(map: "index_offerings_on_offering_code") @db.VarChar(128)
+  partner_offering_accounts partner_offering_accounts[]
+  sites                     sites[]
+}
+
+model onboarding_applications {
+  id                          BigInt    @id @default(autoincrement())
+  user_id                     BigInt?
+  google_access_token_id      BigInt?
+  ganalytics_profile_id       String?
+  ganalytics_detail_report    String?
+  ganalytics_status           String?
+  created_at                  DateTime  @db.Timestamp(6)
+  updated_at                  DateTime  @updatedAt @db.Timestamp(6)
+  name                        String?
+  email                       String?
+  url                         String?
+  status_                     Int?      @map("“status”")
+  cutover_type                Int?
+  cutover_date                DateTime? @db.Date
+  previous_network            String?
+  analytics_requested         Boolean?
+  existing_site               String?
+  monthly_sessions            Int?
+  adx_requested               DateTime? @db.Date
+  adx_response                DateTime? @db.Date
+  adx_approved                Boolean?
+  aol_requested               DateTime? @db.Date
+  aol_response                DateTime? @db.Date
+  aol_approved                Boolean?
+  appnexus_requested          DateTime? @db.Date
+  appnexus_response           DateTime? @db.Date
+  appnexus_approved           Boolean?
+  gumgum                      String?
+  contract_sent               DateTime? @db.Date
+  next_steps_sent             Boolean?
+  created_in_intercom         Boolean?
+  notes                       String?
+  row_id                      Int?
+  notes_updated_at            DateTime? @db.Date
+  site_title                  String?
+  site_category               String?
+  has_applied_before          Boolean?
+  existing_site_management    Boolean?
+  own_mediavine_site          Boolean?
+  existing_mediavine_site     String?
+  exclusive_ad_representation String?
+  cms_blog_platform           String?
+  heard_about_mediavine       String?
+  index                       String?
+  index_approved              Boolean?
+  index_requested             DateTime? @db.Date
+  index_response              DateTime? @db.Date
+  uuid                        String?
+  browser_analytics           Json?
+  country_analytics           Json?
+  date_analytics              Json?
+  device_analytics            Json?
+  pagepath_analytics          Json?
+  source_analytics            Json?
+  ganalytics_access_token     String?
+  ganalytics_refresh_token    String?
+  status                      String?   @db.VarChar
+  pull_google_analytics       Boolean?  @default(false)
+  offering_id                 Int?
+
+  @@index([offering_id], map: "index_onboarding_applications_on_offering_id")
+  @@index([name], map: "index_onboarding_applications_on_name")
+  @@index([uuid], map: "index_onboarding_applications_on_uuid")
+}
+
+model optouts {
+  id          Int     @id @default(autoincrement())
+  title       String? @db.VarChar
+  slug        String? @db.VarChar(30)
+  description String? @db.VarChar
+  iab         String? @db.VarChar
+
+  @@index([slug], map: "index_optouts_on_slug")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model optouts_sites {
+  optout_id Int?
+  site_id   Int?
+
+  @@index([optout_id, site_id], map: "index_optouts_sites_on_optout_id_and_site_id")
+  @@index([site_id], map: "index_optouts_sites_on_site_id")
+  @@ignore
+}
+
+model page_categories {
+  id         Int      @id @default(autoincrement())
+  title      String?  @db.VarChar
+  slug       String   @unique(map: "index_page_categories_on_slug") @db.VarChar(64)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+}
+
+model page_reports {
+  id                   Int       @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  path                 String?   @db.VarChar
+  pageviews            Int?      @default(0)
+  amp_pageviews        Int?      @default(0)
+  revenue              Int?
+  net_revenue          Int?
+  impressions          Int?
+  unfilled_impressions Int?
+  viewable_impressions Int?
+  viewed_impressions   Int?
+  unpaid_impressions   Int?
+  paid_impressions     Int?
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([date], map: "index_page_reports_on_date")
+  @@index([date, pageviews], map: "index_page_reports_on_date_and_pageviews")
+  @@index([site_id, date], map: "index_page_reports_on_site_id_and_date")
+  @@index([updated_at], map: "index_page_reports_on_updated_at")
+}
+
+model pages {
+  id               Int      @id @default(autoincrement())
+  title            String?  @unique(map: "index_pages_on_title") @db.VarChar
+  slug             String?  @unique(map: "index_pages_on_slug") @db.VarChar(64)
+  description      String?
+  body             String?
+  page_category_id Int?
+  public           Boolean?
+  hidden           Boolean?
+
+  @@index([page_category_id, title], map: "index_pages_on_page_category_id_and_title")
+}
+
+model pageview_reports {
+  id                     Int       @id @default(autoincrement())
+  site_id                Int?
+  date                   DateTime? @db.Date
+  desktop_pageviews      Int       @default(0)
+  mobile_pageviews       Int       @default(0)
+  tablet_pageviews       Int       @default(0)
+  users                  Int?
+  amp_pageviews          Int?      @default(0)
+  amp_users              Int?      @default(0)
+  mobile_sessions        Int       @default(0)
+  tablet_sessions        Int       @default(0)
+  desktop_sessions       Int       @default(0)
+  amp_sessions           Int       @default(0)
+  amp_net_revenue        Int       @default(0)
+  mobile_net_revenue     Int       @default(0)
+  tablet_net_revenue     Int       @default(0)
+  desktop_net_revenue    Int       @default(0)
+  created_at             DateTime? @db.Timestamp(6)
+  updated_at             DateTime? @updatedAt @db.Timestamp(6)
+  bounces                Int?      @default(0)
+  total_session_duration Decimal?  @default(0.0) @db.Decimal(18, 1)
+
+  @@index([date], map: "index_pageview_reports_on_date")
+  @@index([site_id, date], map: "index_pageview_reports_on_site_id_and_date")
+  @@index([updated_at], map: "index_pageview_reports_on_updated_at")
+}
+
+model partner_offering_accounts {
+  id          BigInt     @id @default(autoincrement())
+  partner_id  Int?
+  offering_id Int?
+  product     String?    @db.VarChar(1024)
+  account     String?    @db.VarChar(1024)
+  created_at  DateTime   @db.Timestamp(6)
+  updated_at  DateTime   @updatedAt @db.Timestamp(6)
+  offerings   offerings? @relation(fields: [offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_b844728bd8")
+  partners    partners?  @relation(fields: [partner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_f34ac6b090")
+
+  @@unique([partner_id, offering_id, product], map: "index_partner_offering_account_unique_key")
+  @@index([offering_id], map: "index_partner_offering_accounts_on_offering_id")
+  @@index([partner_id], map: "index_partner_offering_accounts_on_partner_id")
+}
+
+model partner_reports {
+  id          Int       @id @default(autoincrement())
+  site_id     Int?
+  partner_id  Int?
+  date        DateTime? @db.Date
+  revenue     Int?
+  net_revenue Int       @default(0)
+  created_at  DateTime? @db.Timestamp(6)
+  updated_at  DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([date], map: "index_partner_reports_on_date")
+  @@index([partner_id, date], map: "index_partner_reports_on_partner_id_and_date")
+  @@index([partner_id, site_id, date], map: "index_partner_reports_on_partner_id_and_site_id_and_date")
+  @@index([site_id, date], map: "index_partner_reports_on_site_id_and_date")
+  @@index([site_id, partner_id, date], map: "index_partner_reports_on_site_id_and_partner_id_and_date")
+  @@index([updated_at], map: "index_partner_reports_on_updated_at")
+}
+
+model partners {
+  id                        Int                         @id @default(autoincrement())
+  title                     String?                     @db.VarChar
+  slug                      String?                     @unique(map: "index_partners_on_slug") @db.VarChar
+  revenue_share             Int?
+  partner_offering_accounts partner_offering_accounts[]
+}
+
+model payees {
+  id                Int      @id @default(autoincrement())
+  name              String?  @db.VarChar
+  tipalti_completed Boolean? @default(false)
+  created_at        DateTime @db.Timestamp(6)
+  updated_at        DateTime @updatedAt @db.Timestamp(6)
+  uuid              String?  @db.VarChar
+  sites             sites[]
+
+  @@index([name], map: "index_payees_on_name")
+}
+
+model playlist_videos {
+  id          Int        @id @default(autoincrement())
+  playlists   playlists? @relation(fields: [playlist_id], references: [id])
+  playlist_id Int?
+  videos      videos?    @relation(fields: [video_id], references: [id])
+  video_id    Int?
+  position    Int?
+
+  @@unique([playlist_id, video_id], map: "index_playlist_videos_on_playlist_id_and_video_id")
+  @@index([playlist_id], map: "index_playlist_videos_on_playlist_id")
+  @@index([video_id], map: "index_playlist_videos_on_video_id")
+}
+
+model playlists {
+  id              Int               @id @default(autoincrement())
+  site_id         Int?
+  user_id         Int?
+  title           String?           @db.VarChar
+  description     String?
+  image           String?           @db.VarChar(64)
+  created_at      DateTime          @db.Timestamp(6)
+  updated_at      DateTime          @updatedAt @db.Timestamp(6)
+  headline        String?           @default("") @db.VarChar
+  playlist_videos playlist_videos[]
+
+  @@index([site_id], map: "index_playlists_on_site_id")
+  @@index([user_id], map: "index_playlists_on_user_id")
+}
+
+model psas {
+  id          Int      @id @default(autoincrement())
+  title       String?  @db.VarChar
+  slug        String?  @db.VarChar
+  description String?  @db.VarChar
+  gam_key     String?  @db.VarChar
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+
+  @@index([slug], map: "index_psas_on_slug")
+  @@index([title], map: "index_psas_on_title")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model psas_sites {
+  psa_id  BigInt?
+  site_id BigInt?
+
+  @@index([psa_id], map: "index_psas_sites_on_psa_id")
+  @@index([psa_id, site_id], map: "index_psas_sites_on_psa_id_and_site_id")
+  @@index([site_id], map: "index_psas_sites_on_site_id")
+  @@ignore
+}
+
+model recipe_templates {
+  id       Int                    @id @default(autoincrement())
+  title    String?                @db.VarChar
+  settings Unsupported("hstore")?
+}
+
+model referrers {
+  id         BigInt   @id @default(autoincrement())
+  name       String?  @unique(map: "unique_names") @db.VarChar
+  active     Boolean? @default(true)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+  sites      sites[]
+
+  @@index([active], map: "index_referrers_on_active")
+}
+
+model revenue_reports {
+  id                   BigInt    @id @default(autoincrement())
+  site_id              Int?
+  date                 DateTime? @db.Date
+  revenue              BigInt?
+  net_revenue          BigInt?
+  impressions          Int?
+  unfilled_impressions Int?
+  viewable_impressions Int?
+  viewed_impressions   Int?
+  unpaid_impressions   Int       @default(0)
+  paid_impressions     Int       @default(0)
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @updatedAt @db.Timestamp(6)
+  sites                sites?    @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_3c36fea2a5")
+
+  @@unique([site_id, date], map: "index_revenue_reports_on_site_id_and_date")
+  @@index([date], map: "index_revenue_reports_on_date")
+  @@index([site_id], map: "index_revenue_reports_on_site_id")
+  @@index([updated_at], map: "index_revenue_reports_on_updated_at")
+}
+
+model schema_migrations {
+  version String @unique(map: "unique_schema_migrations") @db.VarChar
+}
+
+model site_answers {
+  id               Int              @id @default(autoincrement())
+  site_question_id Int?
+  title            String?          @db.VarChar
+  created_at       DateTime         @db.Timestamp(6)
+  updated_at       DateTime         @updatedAt @db.Timestamp(6)
+  site_questions   site_questions?  @relation(fields: [site_question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_dd06ca14c0")
+  site_responses   site_responses[]
+
+  @@index([site_question_id], map: "index_site_answers_on_site_question_id")
+}
+
+model site_questions {
+  id             Int              @id @default(autoincrement())
+  title          String?          @db.VarChar
+  description    String?
+  multiple       Boolean?
+  created_at     DateTime         @db.Timestamp(6)
+  updated_at     DateTime         @updatedAt @db.Timestamp(6)
+  short_title    String?          @db.VarChar
+  site_answers   site_answers[]
+  site_responses site_responses[]
+}
+
+model site_responses {
+  id               Int             @id @default(autoincrement())
+  site_id          Int?
+  site_question_id Int?
+  site_answer_id   Int?
+  created_at       DateTime        @db.Timestamp(6)
+  updated_at       DateTime        @updatedAt @db.Timestamp(6)
+  other            String?         @db.VarChar
+  sites            sites?          @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_09892a30cc")
+  site_questions   site_questions? @relation(fields: [site_question_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_236ce1728e")
+  site_answers     site_answers?   @relation(fields: [site_answer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_7945f3330b")
+
+  @@index([site_answer_id], map: "index_site_responses_on_site_answer_id")
+  @@index([site_id], map: "index_site_responses_on_site_id")
+  @@index([site_question_id], map: "index_site_responses_on_site_question_id")
+}
+
+model site_slots {
+  id          BigInt   @id @default(autoincrement())
+  site_id     Int?
+  adunit      String?  @db.VarChar
+  selector    String?  @db.VarChar
+  position    String?  @db.VarChar
+  description String?
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+  device_type String?  @default("both") @db.VarChar
+  sites       sites?   @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_861f27bde0")
+
+  @@index([site_id], map: "index_site_slots_on_site_id")
+}
+
+model site_users {
+  id         Int      @id @default(autoincrement())
+  site_id    Int?
+  user_id    Int?
+  roles_mask Int?
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+  users      users?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sites      sites?   @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model sites {
+  id                         Int                    @id @default(autoincrement())
+  title                      String?                @unique(map: "index_sites_on_title") @db.VarChar
+  slug                       String?                @unique(map: "index_sites_on_slug") @db.VarChar(64)
+  settings                   Unsupported("hstore")?
+  created_at                 DateTime               @db.Timestamp(6)
+  updated_at                 DateTime               @updatedAt @db.Timestamp(6)
+  domain                     String?                @unique(map: "index_sites_on_domain") @db.VarChar
+  adunit                     String?                @db.VarChar
+  live_on                    DateTime?              @db.Date
+  category_id                Int?
+  deactivated                Boolean                @default(false)
+  profile                    Unsupported("hstore")?
+  address                    String?                @db.VarChar
+  latitude                   Float?
+  longitude                  Float?
+  video_settings             Unsupported("hstore")?
+  bidder_settings            Unsupported("hstore")?
+  anniversary_on             DateTime?              @db.Date
+  domain_created_at          DateTime?              @db.Date
+  payee_id                   Int?
+  videos_count               Int?                   @default(0)
+  do_not_pay                 Boolean?               @default(false)
+  social_media               Unsupported("hstore")? @default(dbgenerated("''::hstore"))
+  up_next                    Boolean?               @default(false)
+  up_next_type               Int?                   @default(0)
+  test_site                  Boolean?               @default(false)
+  grow_site_id               String?                @db.VarChar
+  grow_faves_enabled         Boolean?               @default(false)
+  google_access_token_id     Int?
+  mcm_gam_site_id            Int?
+  mcp_debug_password         String?                @db.VarChar
+  opt_in_to_beta_center      Boolean?               @default(false)
+  uuid                       String?                @unique(map: "index_sites_on_uuid") @db.Uuid
+  display_ads_at             DateTime?              @db.Timestamp(6)
+  offering_id                Int?                   @default(1)
+  installation_verified      Boolean?               @default(false)
+  installation_attempt_count Int?                   @default(0)
+  referrer_id                BigInt?
+  ga4_live_on                DateTime?              @db.Timestamp(6)
+  uplift_enabled             Boolean?               @default(false)
+  credits                    credits[]
+  custom_purposes            custom_purposes[]
+  revenue_reports            revenue_reports[]
+  site_responses             site_responses[]
+  site_slots                 site_slots[]
+  categories                 categories?            @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_2414b26d1c")
+  offerings                  offerings?             @relation(fields: [offering_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_37c27dfda2")
+  referrers                  referrers?             @relation(fields: [referrer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_c20d08b69b")
+  mcm_gam_sites              mcm_gam_sites?         @relation(fields: [mcm_gam_site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_eb45269d68")
+  url_filters                url_filters[]
+  site_users                 site_users[]
+  payees                     payees?                @relation(fields: [payee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([adunit], map: "index_sites_on_adunit")
+  @@index([bidder_settings], map: "index_sites_on_bidder_settings", type: Gin)
+  @@index([category_id], map: "index_sites_on_category_id")
+  @@index([latitude, longitude], map: "index_sites_on_latitude_and_longitude")
+  @@index([mcm_gam_site_id], map: "index_sites_on_mcm_gam_site_id")
+  @@index([mcp_debug_password], map: "index_sites_on_mcp_debug_password")
+  @@index([offering_id], map: "index_sites_on_offering_id")
+  @@index([payee_id], map: "index_sites_on_payee_id")
+  @@index([profile], map: "index_sites_on_profile", type: Gin)
+  @@index([referrer_id], map: "index_sites_on_referrer_id")
+  @@index([settings], map: "index_sites_on_settings", type: Gin)
+  @@index([social_media], map: "index_sites_on_social_media", type: Gin)
+  @@index([video_settings], map: "index_sites_on_video_settings", type: Gin)
+}
+
+model source_reports {
+  id                   BigInt    @id @default(autoincrement())
+  site_id              BigInt?
+  date                 DateTime? @db.Date
+  source               String?   @db.VarChar
+  sessions             Int?
+  pageviews            Int?
+  avg_session_duration Int?
+  impressions          Int?
+  revenue              Int?
+  net_revenue          Int?
+  created_at           DateTime  @db.Timestamp(6)
+  updated_at           DateTime  @updatedAt @db.Timestamp(6)
+  account_type         String?   @db.VarChar(255)
+
+  @@index([date], map: "index_source_reports_on_date")
+  @@index([site_id], map: "index_source_reports_on_site_id")
+  @@index([site_id, date], map: "index_source_reports_on_site_id_and_date")
+  @@index([updated_at], map: "index_source_reports_on_updated_at")
+}
+
+model starred_custom_views {
+  id             BigInt   @id @default(autoincrement())
+  custom_view_id BigInt?
+  user_id        BigInt?
+  created_at     DateTime @db.Timestamp(6)
+  updated_at     DateTime @updatedAt @db.Timestamp(6)
+
+  @@index([custom_view_id], map: "index_starred_custom_views_on_custom_view_id")
+  @@index([user_id], map: "index_starred_custom_views_on_user_id")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model task_records {
+  version String @db.VarChar
+
+  @@ignore
+}
+
+model theme_templates {
+  id       Int                    @id @default(autoincrement())
+  title    String?                @db.VarChar
+  settings Unsupported("hstore")?
+}
+
+model url_filters {
+  id            Int                    @id @default(autoincrement())
+  site_id       Int?
+  path          String?                @db.VarChar
+  settings      Unsupported("hstore")?
+  expires_on    DateTime?              @db.Date
+  never_expires Boolean?               @default(false)
+  sites         sites?                 @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_87e21a29ef")
+
+  @@index([expires_on], map: "index_url_filters_on_expires_on")
+  @@index([site_id], map: "index_url_filters_on_site_id")
+}
+
+model users {
+  id                              Int                   @id @default(autoincrement())
+  email                           String                @unique(map: "index_users_on_email") @default("") @db.VarChar
+  encrypted_password              String                @default("") @db.VarChar
+  reset_password_token            String?               @unique(map: "index_users_on_reset_password_token") @db.VarChar
+  reset_password_sent_at          DateTime?             @db.Timestamp(6)
+  remember_created_at             DateTime?             @db.Timestamp(6)
+  sign_in_count                   Int                   @default(0)
+  current_sign_in_at              DateTime?             @db.Timestamp(6)
+  last_sign_in_at                 DateTime?             @db.Timestamp(6)
+  current_sign_in_ip              String?               @db.Inet
+  last_sign_in_ip                 String?               @db.Inet
+  failed_attempts                 Int                   @default(0)
+  unlock_token                    String?               @unique(map: "index_users_on_unlock_token") @db.VarChar
+  locked_at                       DateTime?             @db.Timestamp(6)
+  created_at                      DateTime?             @db.Timestamp(6)
+  updated_at                      DateTime?             @updatedAt @db.Timestamp(6)
+  title                           String?               @db.VarChar
+  authentication_token            String?               @unique(map: "index_users_on_authentication_token") @db.VarChar(30)
+  roles_mask                      Int?
+  authy_id                        String?               @db.VarChar
+  last_sign_in_with_twilio_verify DateTime?             @db.Timestamp(6)
+  twilio_verify_enabled           Boolean?              @default(false)
+  invitation_token                String?               @unique(map: "index_users_on_invitation_token") @db.VarChar
+  invitation_created_at           DateTime?             @db.Timestamp(6)
+  invitation_sent_at              DateTime?             @db.Timestamp(6)
+  invitation_accepted_at          DateTime?             @db.Timestamp(6)
+  invitation_limit                Int?
+  invited_by_id                   Int?
+  invited_by_type                 String?               @db.VarChar
+  invitations_count               Int?                  @default(0)
+  super_admin                     Boolean?
+  jwt_secret                      String                @unique(map: "index_users_on_jwt_secret") @db.VarChar
+  grow_member_id                  String?               @db.VarChar
+  read_only_admin                 Boolean?
+  favorite_sites                  String?               @default("")
+  premiere_publisher              Boolean               @default(false)
+  twilio_totp_factor_sid          String?               @db.VarChar
+  twilio_verify_enabled_at        DateTime?             @db.Timestamp(6)
+  mobile_phone_ciphertext         String?
+  analytics_tokens                analytics_tokens[]
+  oauth_access_grants             oauth_access_grants[]
+  oauth_access_tokens             oauth_access_tokens[]
+  site_users                      site_users[]
+
+  @@index([authy_id], map: "index_users_on_authy_id")
+  @@index([invitations_count], map: "index_users_on_invitations_count")
+  @@index([invited_by_id], map: "index_users_on_invited_by_id")
+}
+
+model version_associations {
+  id               Int    @id @default(autoincrement())
+  version_id       Int?
+  foreign_key_name String @db.VarChar
+  foreign_key_id   Int?
+
+  @@index([foreign_key_name, foreign_key_id], map: "index_version_associations_on_foreign_key")
+  @@index([version_id], map: "index_version_associations_on_version_id")
+}
+
+model versions {
+  id             Int       @id @default(autoincrement())
+  item_type      String    @db.VarChar
+  item_id        Int
+  event          String    @db.VarChar
+  whodunnit      String?   @db.VarChar
+  object         String?
+  created_at     DateTime? @db.Timestamp(6)
+  object_changes String?
+  transaction_id Int?
+  ip             String?   @db.VarChar
+
+  @@index([item_type, item_id], map: "index_versions_on_item_type_and_item_id")
+  @@index([item_type, whodunnit], map: "index_versions_on_item_type_and_whodunnit")
+  @@index([transaction_id], map: "index_versions_on_transaction_id")
+}
+
+model video_callbacks {
+  id         Int       @id @default(autoincrement())
+  slug       String?   @db.VarChar(32)
+  response   String?
+  created_at DateTime? @db.Timestamp(6)
+  updated_at DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([slug], map: "index_video_callbacks_on_slug")
+}
+
+model video_chapters {
+  id          Int      @id @default(autoincrement())
+  video_id    Int?
+  time        Int?
+  description String?  @db.VarChar
+  created_at  DateTime @db.Timestamp(6)
+  updated_at  DateTime @updatedAt @db.Timestamp(6)
+  videos      videos?  @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_b78578eb1a")
+
+  @@index([video_id], map: "index_video_chapters_on_video_id")
+}
+
+model video_reports {
+  id                   Int       @id @default(autoincrement())
+  video_id             Int?
+  date                 DateTime? @db.Date
+  impressions          Int       @default(0)
+  revenue              Int       @default(0)
+  unfilled_impressions Int       @default(0)
+  viewable_impressions Int       @default(0)
+  viewed_impressions   Int       @default(0)
+  net_revenue          Int       @default(0)
+  site_id              Int?
+  created_at           DateTime? @db.Timestamp(6)
+  updated_at           DateTime? @updatedAt @db.Timestamp(6)
+
+  @@index([date], map: "index_video_reports_on_date")
+  @@index([updated_at], map: "index_video_reports_on_updated_at")
+  @@index([video_id, date], map: "index_video_reports_on_video_id_and_date")
+  @@index([site_id, date], map: "site_id_on_date")
+}
+
+model video_tracks {
+  id         Int      @id @default(autoincrement())
+  video_id   Int?
+  filetype   String?  @db.VarChar
+  kind       String?  @db.VarChar
+  srclang    String?  @db.VarChar
+  slug       String?  @db.VarChar
+  label      String?  @db.VarChar
+  default    Boolean? @default(false)
+  created_at DateTime @db.Timestamp(6)
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+  videos     videos?  @relation(fields: [video_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_rails_bc1d366c30")
+
+  @@index([video_id], map: "index_video_tracks_on_video_id")
+}
+
+model videos {
+  id                Int               @id @default(autoincrement())
+  site_id           Int?
+  user_id           Int?
+  title             String?           @db.VarChar
+  permalink         String?           @db.VarChar
+  description       String?
+  keywords          String?
+  duration          Int?
+  slug              String?           @unique(map: "index_videos_on_slug") @db.VarChar(32)
+  file              String?           @db.VarChar(64)
+  width             Int?
+  height            Int?
+  image             String?           @db.VarChar(64)
+  created_at        DateTime?         @db.Timestamp(6)
+  updated_at        DateTime?         @updatedAt @db.Timestamp(6)
+  status            Int?              @default(0)
+  up_next_order     Int?              @default(0)
+  video_number      Int?
+  video_headline    String?           @db.VarChar
+  streaming_profile String?           @default("video") @db.VarChar
+  video_chapters    video_chapters[]
+  video_tracks      video_tracks[]
+  playlist_videos   playlist_videos[]
+
+  @@unique([site_id, video_number], map: "index_videos_on_site_id_and_video_number")
+  @@index([site_id], map: "index_videos_on_site_id")
+  @@index([user_id], map: "index_videos_on_user_id")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model onboarding_applications_exporter {
+  onboarding_application_id BigInt?
+  browser_analytics         String?
+  country_analytics         String?
+  date_analytics            String?
+  device_analytics          String?
+  pagepath_analytics        String?
+  source_analytics          String?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model analytics_connection_exporter {
+  google_analytics_connection_id Int?
+  new_dashboard_status           String?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model onboarding_applications_export {
+  ID                          Int?
+  USER_ID                     Float?
+  GOOGLE_ACCESS_TOKEN_ID      Float?
+  GANALYTICS_PROFILE_ID       String?
+  GANALYTICS_DETAIL_REPORT    String?
+  GANALYTICS_STATUS           String?
+  CREATED_AT                  DateTime? @db.Timestamp(6)
+  UPDATED_AT                  DateTime? @db.Timestamp(6)
+  NAME                        String?
+  EMAIL                       String?
+  URL                         String?
+  STATUS                      Float?
+  CUTOVER_TYPE                Float?
+  CUTOVER_DATE                DateTime? @db.Date
+  PREVIOUS_NETWORK            String?
+  ANALYTICS_REQUESTED         String?
+  EXISTING_SITE               String?
+  MONTHLY_SESSIONS            Float?
+  ADX_REQUESTED               String?
+  ADX_RESPONSE                String?
+  ADX_APPROVED                String?
+  AOL_REQUESTED               String?
+  AOL_RESPONSE                String?
+  AOL_APPROVED                String?
+  APPNEXUS_REQUESTED          String?
+  APPNEXUS_RESPONSE           String?
+  APPNEXUS_APPROVED           String?
+  GUMGUM                      String?
+  CONTRACT_SENT               String?
+  NEXT_STEPS_SENT             String?
+  CREATED_IN_INTERCOM         String?
+  NOTES                       String?
+  ROW_ID                      Float?
+  NOTES_UPDATED_AT            DateTime? @db.Date
+  SITE_TITLE                  String?
+  SITE_CATEGORY               String?
+  HAS_APPLIED_BEFORE          String?
+  EXISTING_SITE_MANAGEMENT    String?
+  OWN_MEDIAVINE_SITE          String?
+  EXISTING_MEDIAVINE_SITE     String?
+  EXCLUSIVE_AD_REPRESENTATION String?
+  CMS_BLOG_PLATFORM           String?
+  HEARD_ABOUT_MEDIAVINE       String?
+  INDEX                       String?
+  INDEX_APPROVED              String?
+  INDEX_REQUESTED             String?
+  INDEX_RESPONSE              String?
+  UUID                        String?
+  BROWSER_ANALYTICS           String?
+  COUNTRY_ANALYTICS           String?
+  DATE_ANALYTICS              String?
+  DEVICE_ANALYTICS            String?
+  PAGEPATH_ANALYTICS          String?
+  SOURCE_ANALYTICS            String?
+  GANALYTICS_ACCESS_TOKEN     String?
+  GANALYTICS_REFRESH_TOKEN    String?
+  SCOPE                       String?
+  PULL_GOOGLE_ANALYTICS       String?
+  DW_SOURCE_NAME              String?
+  DW_LOADED_AT                DateTime? @db.Timestamp(6)
+  DW_UPDATED_AT               DateTime? @db.Timestamp(6)
+
+  @@ignore
+}

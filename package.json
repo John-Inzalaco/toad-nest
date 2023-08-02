@@ -1,0 +1,131 @@
+{
+  "name": "nest-typescript-starter",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Nest TypeScript starter repository",
+  "license": "MIT",
+  "scripts": {
+    "build": "nest build",
+    "precompileHandlebars": "ts-node --transpile-only ./scripts/precompileHandlebars.ts",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start --watch -e 'node -r ./dist/tracing'",
+    "start:debug": "nest start --debug --watch",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "postinstall": "test -n \"$SKIP_POSTINSTALL\" || husky install",
+    "prisma:generate:dashboard": "prisma generate --schema=./prisma/dashboard.prisma",
+    "prisma:generate:reporting": "prisma generate --schema=./prisma/reporting.prisma",
+    "prisma:generate": "yarn prisma:generate:dashboard && yarn prisma:generate:reporting",
+    "prisma:pull:dashboard": "prisma db pull --schema=./prisma/dashboard.prisma && npx ts-node ./scripts/fixPrismaSchema.ts && prisma format --schema=./prisma/dashboard.prisma",
+    "prisma:pull:reporting": "prisma db pull --schema=./prisma/reporting.prisma",
+    "prisma:pull": "yarn prisma:pull:dashboard && yarn prisma:pull:reporting",
+    "test": "ts-node --transpile-only ./scripts/setupTestDb.ts && jest",
+    "test:rails": "ts-node --transpile-only ./scripts/setupTestDb.ts && USE_RAILS_API=true jest",
+    "test:watch": "yarn test --watch",
+    "test:rails:watch": "yarn test:rails --watch",
+    "test:cov": "yarn test --coverage",
+    "nest": "nest",
+    "commit": "yarn dlx git-cz"
+  },
+  "dependencies": {
+    "@nestjs/common": "^9.4.0",
+    "@nestjs/config": "^2.3.1",
+    "@nestjs/core": "^9.4.0",
+    "@nestjs/jwt": "^10.0.3",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/platform-express": "^9.4.0",
+    "@nestjs/swagger": "^6.3.0",
+    "@nestjs/terminus": "^9.2.2",
+    "@opentelemetry/api": "^1.4.1",
+    "@opentelemetry/auto-instrumentations-node": "^0.37.1",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.40.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.40.0",
+    "@opentelemetry/id-generator-aws-xray": "^1.1.2",
+    "@opentelemetry/propagator-aws-xray": "^1.2.1",
+    "@opentelemetry/resources": "^1.14.0",
+    "@opentelemetry/sdk-metrics": "^1.14.0",
+    "@opentelemetry/sdk-node": "^0.40.0",
+    "@opentelemetry/sdk-trace-base": "^1.14.0",
+    "@opentelemetry/semantic-conventions": "^1.14.0",
+    "@prisma/client": "5.0.0",
+    "bcrypt": "^5.1.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "cloudinary": "^1.36.4",
+    "handlebars": "^4.7.7",
+    "jsonwebtoken": "^9.0.0",
+    "nestjs-cls": "^3.5.0",
+    "nestjs-pino": "^3.2.0",
+    "pino-http": "^8.3.3",
+    "pino-pretty": "^10.0.0",
+    "redis": "^4.6.7",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.0",
+    "undici": "^5.22.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.1",
+    "@commitlint/config-conventional": "^17.6.1",
+    "@nestjs/cli": "^9.4.2",
+    "@nestjs/schematics": "^9.1.0",
+    "@nestjs/testing": "^9.4.0",
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.1",
+    "@types/jsonwebtoken": "^9",
+    "@types/node": "^18.16.1",
+    "@types/pg": "^8.6.6",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "eslint": "^8.39.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-no-only-tests": "^3.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "jest": "^29.5.0",
+    "lint-staged": ">=10",
+    "msw": "^1.2.2",
+    "pg": "^8.10.0",
+    "prettier": "^2.8.8",
+    "prisma": "5.0.0",
+    "source-map-support": "^0.5.21",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.1.6"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "moduleNameMapper": {
+      "@prisma/dashboard": "<rootDir>/node_modules/.prisma/generated/dashboardClient/index",
+      "@prisma/reporting": "<rootDir>/node_modules/.prisma/generated/reportingClient/index"
+    },
+    "roots": [
+      "<rootDir>"
+    ],
+    "testRegex": ".test.ts$",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ],
+    "rootDir": "",
+    "collectCoverageFrom": [
+      "src/**/*.(t|j)s",
+      "!src/db/generated/**/*",
+      "!src/**/*.dto.ts"
+    ],
+    "testEnvironment": "node"
+  },
+  "packageManager": "yarn@3.5.0",
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "yarn lint --cache --fix"
+    ]
+  }
+}

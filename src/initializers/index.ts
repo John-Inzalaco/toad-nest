@@ -1,0 +1,1 @@
+export { initSwagger } from './swagger';
